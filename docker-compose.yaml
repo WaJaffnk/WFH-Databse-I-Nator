@@ -1,0 +1,48 @@
+services:
+  wfhinator-db:
+    image: postgres
+    hostname: wfhinatordb
+    restart: always
+    environment: 
+     - DATABASE_HOST=127.0.0.1
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=wajaffnk
+     - POSTGRES_PORT=5432
+     - POSTGRES_DB=postgres
+    ports:
+     - '5432:5432'
+    healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 5s
+        retries: 5
+    volumes:
+      - ./init_scripts/:/docker-entrypoint-initdb.d
+      - wfhinatordbsource:/var/lib/postgresql/data
+    networks:
+      - wfhinatordb
+
+  #pgadmin:
+  #   container_name: pgadmin4_container
+  #   image: dpage/pgadmin4
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: jeff.haddock.developer@gmail.com
+  #     PGADMIN_DEFAULT_PASSWORD: wajaffnk
+  #     PGADMIN_LISTEN_PORT: 80
+  #   ports:
+  #     - "8081:80"
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
+  #   depends_on:
+  #     - wfhinator-db
+
+volumes:
+  wfhinatordbsource:
+    driver: local
+
+networks:
+  wfhinatordb:
+    driver: bridge
+    # override the name
+    name: wfhinatordb-network
