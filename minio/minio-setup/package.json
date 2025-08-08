@@ -1,0 +1,15 @@
+{
+  "name": "minio-setup",
+  "version": "1.0.0",
+  "description": "brief node application to manage minio bucket and account setup in instructions",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Jeff a la Wajaffnk",
+  "license": "ISC",
+  "dependencies": {
+    "minio": "^8.0.5"
+  }
+}

@@ -36,10 +36,11 @@ services:
   #     - pgadmin-data:/var/lib/pgadmin
   #   depends_on:
   #     - wfhinator-db
-
+     
 volumes:
   wfhinatordbsource:
     driver: local
+  minio_data: {} # Define the named volume
 
 networks:
   wfhinatordb:

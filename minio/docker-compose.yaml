@@ -1,0 +1,41 @@
+services:
+  minio-setup-service:
+    build: minio-setup/
+    container_name: minio-setup
+    restart: on-failure
+    depends_on:
+      minio:
+        condition: service_healthy
+    networks:
+      - minio
+    
+
+  minio:
+    image: minio/minio # Use the official MinIO Docker image
+    name: wfh-minio
+    ports:
+      - "9000:9000" # MinIO server API port
+      - "9001:9001" # MinIO console port
+    volumes:
+      - minio_data:/data # Mount a named volume for persistent data storage
+    healthcheck:
+          test: ["CMD", "sh", "-c", "curl -f http://localhost:9000/minio/health/live || exit 1"]
+          interval: 5s
+          timeout: 5s
+          retries: 5
+    environment:
+      MINIO_ROOT_USER: wajaffnk # Set your desired root username
+      MINIO_ROOT_PASSWORD: wajaffnk # Set your desired root password (ensure it meets complexity requirements if any)
+      MINIO_DEFAULT_BUCKETS: wfhinator_bucket # Optional: Create a default bucket on startup
+    command: server --console-address ":9001" /data # Start MinIO server and specify console address
+    networks:
+      - minio # Connect to the existing network
+     
+volumes:
+  minio_data: {} # Define the named volume
+
+networks:
+  minio:
+    driver: bridge
+    # override the name
+    name: minio-network
