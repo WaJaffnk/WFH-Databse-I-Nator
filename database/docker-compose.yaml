@@ -4,23 +4,23 @@ services:
     hostname: wfhinatordb
     restart: always
     environment: 
-     - DATABASE_HOST=127.0.0.1
-     - POSTGRES_USER=postgres
-     - POSTGRES_PASSWORD=wajaffnk
-     - POSTGRES_PORT=5432
-     - POSTGRES_DB=postgres
+     - DATABASE_HOST=${DATABASE_HOST}
+     - POSTGRES_USER=${POSTGRES_USER}
+     - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+     - POSTGRES_PORT=${POSTGRES_PORT}
+     - POSTGRES_DB=${POSTGRES_DB}
     ports:
-     - '5432:5432'
+     - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     healthcheck:
         test: ["CMD-SHELL", "pg_isready -U postgres"]
         interval: 5s
         timeout: 5s
         retries: 5
     volumes:
-      - ./init_scripts/:/docker-entrypoint-initdb.d
-      - wfhinatordbsource:/var/lib/postgresql/data
+      - ./init_scripts:/docker-entrypoint-initdb.d
+      - db-data:/var/lib/postgresql/data
     networks:
-      - wfhinatordb
+      - haddoservnet
 
   #pgadmin:
   #   container_name: pgadmin4_container
@@ -38,12 +38,9 @@ services:
   #     - wfhinator-db
      
 volumes:
-  wfhinatordbsource:
+  db-data:
     driver: local
-  minio_data: {} # Define the named volume
 
 networks:
-  wfhinatordb:
-    driver: bridge
-    # override the name
-    name: wfhinatordb-network
+  haddoservnet:
+    external: true

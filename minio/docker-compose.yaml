@@ -3,11 +3,13 @@ services:
     build: minio-setup/
     container_name: minio-setup
     restart: on-failure
+    volumes:
+      - ./.env:/app/.env
     depends_on:
       minio:
         condition: service_healthy
     networks:
-      - minio
+      - haddoservnet
     
 
   minio:
@@ -24,18 +26,16 @@ services:
           timeout: 5s
           retries: 5
     environment:
-      MINIO_ROOT_USER: wajaffnk # Set your desired root username
-      MINIO_ROOT_PASSWORD: wajaffnk # Set your desired root password (ensure it meets complexity requirements if any)
-      MINIO_DEFAULT_BUCKETS: wfhinator_bucket # Optional: Create a default bucket on startup
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD} # Set your desired root password (ensure it meets complexity requirements if any)
+      MINIO_DEFAULT_BUCKETS: ${MINIO_DEFAULT_BUCKETS} # Optional: Create a default bucket on startup
     command: server --console-address ":9001" /data # Start MinIO server and specify console address
     networks:
-      - minio # Connect to the existing network
+      - haddoservnet # Connect to the existing network
      
 volumes:
   minio_data: {} # Define the named volume
 
 networks:
-  minio:
-    driver: bridge
-    # override the name
-    name: minio-network
+  haddoservnet:
+    external: true # Use the existing external network
